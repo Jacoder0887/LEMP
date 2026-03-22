@@ -13,6 +13,8 @@ services:
       - 9000:8080
     depends_on:
       - database
+    networks:
+      - lemp
 
   database:
     container_name: database
@@ -26,7 +28,28 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     volumes:
       - db-data:/var/lib/mysql
+    networks:
+      - lemp
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - database
+    environment:
+      PMA_HOST: database
+      PMA_PORT: 3306
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:80" 
+    networks:
+      - lemp
 
 volumes:
   db-data: ~
+
+networks:
+  lemp:
+    driver: bridge

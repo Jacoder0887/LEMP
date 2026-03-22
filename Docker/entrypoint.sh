@@ -8,6 +8,7 @@ if [ ! -f ".env" ]; then
     echo "Creating env file"
     cp .env.example .env
     php artisan key:generate
+    php artisan install:api --no-interaction
 fi
 
 php-fpm -D
