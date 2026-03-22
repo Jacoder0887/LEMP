@@ -4,6 +4,7 @@ services:
     container_name: php
     build:
       context: .
+      dockerfile: Docker/php-8.2/Dockerfile
       target: php
     working_dir: /var/www
     volumes:
