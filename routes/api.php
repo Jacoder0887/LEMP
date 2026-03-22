@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\PostController;
+
+use App\Http\Controllers\Api\V1\PostController as PostControllerV1;
+use App\Http\Controllers\Api\V2\PostController as PostControllerV2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -12,4 +14,10 @@ Route::get('/hello', function(){
     return ["message" => "YOW!"];
 });
 
-Route::apiResource("post", PostController::class);
+Route::prefix("v1")->group(function () {
+    Route::apiResource("post", PostControllerV1::class);
+});
+
+Route::prefix("v2")->group(function () {
+    Route::apiResource("post", PostControllerV2::class);
+});
