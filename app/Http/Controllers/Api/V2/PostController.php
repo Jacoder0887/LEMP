@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 use Illuminate\Http\Request;
+use Str;
 
 class PostController extends Controller
 {
@@ -12,11 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-         return [[
-            'id' => 1,
-            'title'=> 'title',
-            'body'=>  'body'
-         ]];
+        return Post::all();
     }
 
     /**
@@ -24,11 +22,20 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
+        $data = $request->validate([
+            'title'=> 'required|string|min:2',
+            'body'=> 'required|string|min:2',
+        ]);
+        $data['author_id'] = 3;
+        $data['body'] = Str::random();
+        $post = Post::create($data);
+         
+
         return response()->json([
-            'id' => 1,
-            'title'=> $data['title'],
-            'body'=>  $data['body'],
+            $post
+            // 'id' => 1,
+            // 'title'=> $data['title'],
+            // 'body'=>  $data['body'],
         ], 201);
          
     }
@@ -36,24 +43,24 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
+    public function show(Post $post)
+    { 
         return response()->json([
-            'id' => $id,
-            'title'=> 'test',
-            'body'=>  'show'
+            $post
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Post $post)
     {
         $data = $request->validate([
             'title'=> 'required|string|min:2',
             'body'=> 'required|string|min:2',
         ]);
+
+        $post->update($data);
 
         return $data;
     }
@@ -61,8 +68,9 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
+        $post->delete();
         return response()->noContent();
     }
 }
