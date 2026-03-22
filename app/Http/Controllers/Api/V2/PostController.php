@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\V2;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
-use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Http\Resources\PostResource;
+use App\Models\Post;  
 use Str;
 
 class PostController extends Controller
@@ -15,7 +15,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::all();
+        return PostResource::collection(Post::with("author")->get());
     }
 
     /**
@@ -29,12 +29,7 @@ class PostController extends Controller
         $post = Post::create($data);
          
 
-        return response()->json([
-            $post
-            // 'id' => 1,
-            // 'title'=> $data['title'],
-            // 'body'=>  $data['body'],
-        ], 201);
+        return new PostResource($post); 
          
     }
 
@@ -43,9 +38,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     { 
-        return response()->json([
-            $post
-        ]);
+        return new PostResource($post); 
     }
 
     /**
@@ -57,7 +50,7 @@ class PostController extends Controller
 
         $post->update($data);
 
-        return $data;
+        return new PostResource($post);
     }
 
     /**
